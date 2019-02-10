@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Smart Parking</string>
+
+    <string name="in">In</string>
+
+    <string name="out">Out</string>
 </resources>
