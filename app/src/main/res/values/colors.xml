@@ -8,6 +8,7 @@
     <color name="red">#FA5738</color>
     <color name="grey">#78849E</color>
     <color name="disable">#EFF2F7</color>
+    <color name="line">#EEEEEE</color>
 
     <!-- Text colors-->
     <color name="textBlack">#353535</color>
