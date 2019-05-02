@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "897024666361",
+    "firebase_url": "https://project-cb8fd.firebaseio.com",
+    "project_id": "project-cb8fd",
+    "storage_bucket": "project-cb8fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897024666361:android:559993ee408cd52e",
+        "android_client_info": {
+          "package_name": "com.rmuti.en.smartparking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897024666361-ke6e8ons38uv6oeuefq0be0sqivbfq12.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rmuti.en.smartparking",
+            "certificate_hash": "bd46f0bf8e088bb2bdbe9662d7fb5855bd09e2c0"
+          }
+        },
+        {
+          "client_id": "897024666361-nkoosn2qm9r7rm9o5dbgf6sc90k7m62h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxKvTi0c4-5EebyvLlTJtAstGB_7Fpxv4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "897024666361-nkoosn2qm9r7rm9o5dbgf6sc90k7m62h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

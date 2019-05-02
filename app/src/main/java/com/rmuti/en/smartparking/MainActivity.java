@@ -185,23 +185,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        if (point.equals("no1")) {
+        if (point.equals("no01")) {
             updatePoint(no1, isBlank);
-        } else if (point.equals("no2")) {
+        } else if (point.equals("no02")) {
             updatePoint(no2, isBlank);
-        } else if (point.equals("no3")) {
+        } else if (point.equals("no03")) {
             updatePoint(no3, isBlank);
-        } else if (point.equals("no4")) {
+        } else if (point.equals("no04")) {
             updatePoint(no4, isBlank);
-        } else if (point.equals("no5")) {
+        } else if (point.equals("no05")) {
             updatePoint(no5, isBlank);
-        } else if (point.equals("no6")) {
+        } else if (point.equals("no06")) {
             updatePoint(no6, isBlank);
-        } else if (point.equals("no7")) {
+        } else if (point.equals("no07")) {
             updatePoint(no7, isBlank);
-        } else if (point.equals("no8")) {
+        } else if (point.equals("no08")) {
             updatePoint(no8, isBlank);
-        } else if (point.equals("no9")) {
+        } else if (point.equals("no09")) {
             updatePoint(no9, isBlank);
         } else if (point.equals("no10")) {
             updatePoint(no10, isBlank);
