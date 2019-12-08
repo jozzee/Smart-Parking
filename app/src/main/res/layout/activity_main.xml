@@ -7,16 +7,45 @@
     android:background="@android:color/white"
     tools:context=".MainActivity">
 
+    <View
+        android:id="@+id/center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toStartOf="@+id/center"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/green"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/tv_busy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toEndOf="@id/center"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/red"
+        android:textSize="40sp" />
+
     <LinearLayout
         android:id="@+id/parking_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/tv_blank"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="64dp"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:id="@+id/row_1"
@@ -64,6 +93,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_4"
                 android:layout_width="0dp"
@@ -102,6 +136,11 @@
                 android:text="6"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_7"
@@ -164,6 +203,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_11"
                 android:layout_width="0dp"
@@ -202,6 +246,11 @@
                 android:text="13"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_14"
@@ -268,6 +317,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_18"
                 android:layout_width="0dp"
@@ -306,6 +360,11 @@
                 android:text="20"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_21"
@@ -368,6 +427,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_25"
                 android:layout_width="0dp"
@@ -406,6 +470,11 @@
                 android:text="27"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_28"
@@ -472,6 +541,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_32"
                 android:layout_width="0dp"
@@ -510,6 +584,11 @@
                 android:text="34"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_35"
@@ -571,6 +650,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_39"
                 android:layout_width="0dp"
@@ -609,6 +693,11 @@
                 android:text="41"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3" />
 
             <View
                 android:id="@+id/free_space"

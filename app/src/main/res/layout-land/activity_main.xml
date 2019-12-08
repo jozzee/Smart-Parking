@@ -6,12 +6,42 @@
     android:background="@android:color/white"
     tools:context=".MainActivity">
 
+    <View
+        android:id="@+id/center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toStartOf="@+id/center"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/green"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/tv_busy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toEndOf="@id/center"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/red"
+        android:textSize="48sp" />
+
     <LinearLayout
         android:id="@+id/parking_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/tv_blank"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="32dp"
         android:orientation="horizontal">
@@ -35,6 +65,11 @@
                 android:text="7"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_6"
@@ -74,6 +109,11 @@
                 android:text="4"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_3"
@@ -135,6 +175,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_13"
                 android:layout_width="match_parent"
@@ -173,6 +218,11 @@
                 android:text="11"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_10"
@@ -239,6 +289,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_20"
                 android:layout_width="match_parent"
@@ -279,6 +334,10 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_17"
@@ -341,6 +400,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_27"
                 android:layout_width="match_parent"
@@ -379,6 +443,11 @@
                 android:text="25"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_24"
@@ -446,6 +515,11 @@
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_34"
                 android:layout_width="match_parent"
@@ -484,6 +558,11 @@
                 android:text="32"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_31"
@@ -538,6 +617,11 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
+
             <TextView
                 android:id="@+id/no_41"
                 android:layout_width="match_parent"
@@ -576,6 +660,11 @@
                 android:text="39"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3" />
 
             <TextView
                 android:id="@+id/no_38"

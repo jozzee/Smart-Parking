@@ -22,16 +22,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView no1, no2, no3, no4, no5, no6, no7, no8, no9, no10,
             no11, no12, no13, no14, no15, no16, no17, no18, no19, no20,
             no21, no22, no23, no24, no25, no26, no27, no28, no29, no30,
-            no31, no32, no33, no34, no35, no36, no37, no38, no39, no40, no41;
+            no31, no32, no33, no34, no35, no36, no37, no38, no39, no40, no41,
+            blank, busy;
 
     private FrameLayout progressLayout;
 
     private DatabaseReference statusRef;
 
+    private int blankValue = 0;
+    private int busyValue = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(getString(R.string.app_name) + " RMUTI KKC");
+        }
 
         progressLayout = findViewById(R.id.progress_layout);
         progressLayout.setVisibility(View.VISIBLE);
@@ -77,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         no39 = findViewById(R.id.no_39);
         no40 = findViewById(R.id.no_40);
         no41 = findViewById(R.id.no_41);
+        blank = findViewById(R.id.tv_blank);
+        busy = findViewById(R.id.tv_busy);
 
         no1.setOnClickListener(this);
         no2.setOnClickListener(this);
@@ -134,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void onClickPoint(String number) {
+        if (number.length() == 1) {
+            number = "0" + number;
+        }
         Intent intent = new Intent(this, HistoryActivity.class);
         intent.putExtra("point", ("no" + number));
         startActivity(intent);
@@ -145,7 +159,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (progressLayout.getVisibility() != View.GONE) {
             progressLayout.setVisibility(View.GONE);
         }
-        onPointChanged(dataSnapshot.getKey(), getValue(dataSnapshot.getValue(String.class)));
+
+        boolean isBlank = getValue(dataSnapshot.getValue(String.class));
+        onPointChanged(dataSnapshot.getKey(), isBlank);
+        if (isBlank) {
+            blankValue++;
+            blank.setText(String.valueOf(blankValue));
+        } else {
+            busyValue++;
+            busy.setText(String.valueOf(busyValue));
+        }
     }
 
     @Override
@@ -154,8 +177,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (progressLayout.getVisibility() != View.GONE) {
             progressLayout.setVisibility(View.GONE);
         }
+        boolean isBlank = getValue(dataSnapshot.getValue(String.class));
+        onPointChanged(dataSnapshot.getKey(), isBlank);
+        if (isBlank) {
+            blankValue++;
+            busyValue--;
 
-        onPointChanged(dataSnapshot.getKey(), getValue(dataSnapshot.getValue(String.class)));
+        } else {
+            blankValue--;
+            busyValue++;
+        }
+        busy.setText(String.valueOf(busyValue));
+        blank.setText(String.valueOf(blankValue));
     }
 
     @Override
@@ -174,10 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean getValue(String value) {
-        if (value != null && value.equals("true")) {
-            return true;
-        }
-        return false;
+        return value != null && value.equals("true");
     }
 
     private void onPointChanged(@Nullable String point, boolean isBlank) {
@@ -274,10 +304,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (isBlank) {
             point.setBackgroundResource(R.drawable.bg_point_free);
-            point.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+            //point.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
         } else {
             point.setBackgroundResource(R.drawable.bg_point_busy);
-            point.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+            //point.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
         }
     }
 }
