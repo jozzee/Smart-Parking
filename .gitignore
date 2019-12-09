@@ -3,7 +3,6 @@
 .gradle
 .idea
 .settings
-.classpath
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -15,5 +14,11 @@
 /build
 /captures
 .externalNativeBuild
+.cxx
 app/build
+app/libs
 app/schemas
+app/release
+app/debug
+app/sampledata
+.classpath
