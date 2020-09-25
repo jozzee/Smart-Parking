@@ -10,6 +10,8 @@
     <color name="disable">#EFF2F7</color>
     <color name="line">#EEEEEE</color>
 
+    <color name="blue">#4FC3F7</color>
+
     <!-- Text colors-->
     <color name="textBlack">#353535</color>
     <color name="textBlackSecond">#454F63</color>

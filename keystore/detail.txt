@@ -1,0 +1,4 @@
+
+Key Store Password: supachai1234
+Alias:              Dookza97
+Key Password:       supachai1234

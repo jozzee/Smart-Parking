@@ -22,7 +22,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView no1, no2, no3, no4, no5, no6, no7, no8, no9, no10,
             no11, no12, no13, no14, no15, no16, no17, no18, no19, no20,
             no21, no22, no23, no24, no25, no26, no27, no28, no29, no30,
-            no31, no32, no33, no34, no35, no36, no37, no38, no39, no40, no41,
+            no31, no32, no33, no34, no35, no36, no37, no38, no39, no40,
+            no41, no42, no43, no44, no45, no46, no47, no48, no49, no50,
+            no51, no52, no53, no54, no55, no56, no57, no58, no59, no60,
+            no61, no62, no63, no64, no65, no66, no67, no68, no69, no70,
+            no71, no72,
             blank, busy;
 
     private FrameLayout progressLayout;
@@ -86,6 +90,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         no39 = findViewById(R.id.no_39);
         no40 = findViewById(R.id.no_40);
         no41 = findViewById(R.id.no_41);
+        no42 = findViewById(R.id.no_42);
+        no43 = findViewById(R.id.no_43);
+        no44 = findViewById(R.id.no_44);
+        no45 = findViewById(R.id.no_45);
+        no46 = findViewById(R.id.no_46);
+        no47 = findViewById(R.id.no_47);
+        no48 = findViewById(R.id.no_48);
+        no49 = findViewById(R.id.no_49);
+        no50 = findViewById(R.id.no_50);
+        no51 = findViewById(R.id.no_51);
+        no52 = findViewById(R.id.no_52);
+        no53 = findViewById(R.id.no_53);
+        no54 = findViewById(R.id.no_54);
+        no55 = findViewById(R.id.no_55);
+        no56 = findViewById(R.id.no_56);
+        no57 = findViewById(R.id.no_57);
+        no58 = findViewById(R.id.no_58);
+        no59 = findViewById(R.id.no_59);
+        no60 = findViewById(R.id.no_60);
+        no61 = findViewById(R.id.no_61);
+        no62 = findViewById(R.id.no_62);
+        no63 = findViewById(R.id.no_63);
+        no64 = findViewById(R.id.no_64);
+        no65 = findViewById(R.id.no_65);
+        no66 = findViewById(R.id.no_66);
+        no67 = findViewById(R.id.no_67);
+        no68 = findViewById(R.id.no_68);
+        no69 = findViewById(R.id.no_69);
+        no70 = findViewById(R.id.no_70);
+        no71 = findViewById(R.id.no_71);
+        no72 = findViewById(R.id.no_72);
         blank = findViewById(R.id.tv_blank);
         busy = findViewById(R.id.tv_busy);
 
@@ -130,6 +165,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         no39.setOnClickListener(this);
         no40.setOnClickListener(this);
         no41.setOnClickListener(this);
+        no42.setOnClickListener(this);
+        no43.setOnClickListener(this);
+        no44.setOnClickListener(this);
+        no45.setOnClickListener(this);
+        no46.setOnClickListener(this);
+        no47.setOnClickListener(this);
+        no48.setOnClickListener(this);
+        no49.setOnClickListener(this);
+        no50.setOnClickListener(this);
+        no51.setOnClickListener(this);
+        no52.setOnClickListener(this);
+        no53.setOnClickListener(this);
+        no54.setOnClickListener(this);
+        no55.setOnClickListener(this);
+        no56.setOnClickListener(this);
+        no57.setOnClickListener(this);
+        no58.setOnClickListener(this);
+        no59.setOnClickListener(this);
+        no60.setOnClickListener(this);
+        no61.setOnClickListener(this);
+        no62.setOnClickListener(this);
+        no63.setOnClickListener(this);
+        no64.setOnClickListener(this);
+        no65.setOnClickListener(this);
+        no66.setOnClickListener(this);
+        no67.setOnClickListener(this);
+        no68.setOnClickListener(this);
+        no69.setOnClickListener(this);
+        no70.setOnClickListener(this);
+        no71.setOnClickListener(this);
+        no72.setOnClickListener(this);
+
 
         statusRef = FirebaseDatabase.getInstance().getReference().child("status");
         statusRef.addChildEventListener(this);
@@ -297,6 +364,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updatePoint(no40, isBlank);
         } else if (point.equals("no41")) {
             updatePoint(no41, isBlank);
+        } else if (point.equals("no42")) {
+            updatePoint(no42, isBlank);
+        } else if (point.equals("no43")) {
+            updatePoint(no43, isBlank);
+        } else if (point.equals("no44")) {
+            updatePoint(no44, isBlank);
+        } else if (point.equals("no45")) {
+            updatePoint(no45, isBlank);
+        } else if (point.equals("no46")) {
+            updatePoint(no46, isBlank);
+        } else if (point.equals("no47")) {
+            updatePoint(no47, isBlank);
+        } else if (point.equals("no48")) {
+            updatePoint(no48, isBlank);
+        } else if (point.equals("no49")) {
+            updatePoint(no49, isBlank);
+        } else if (point.equals("no50")) {
+            updatePoint(no50, isBlank);
+        } else if (point.equals("no51")) {
+            updatePoint(no51, isBlank);
+        } else if (point.equals("no52")) {
+            updatePoint(no52, isBlank);
+        } else if (point.equals("no53")) {
+            updatePoint(no53, isBlank);
+        } else if (point.equals("no54")) {
+            updatePoint(no54, isBlank);
+        } else if (point.equals("no55")) {
+            updatePoint(no55, isBlank);
+        } else if (point.equals("no56")) {
+            updatePoint(no56, isBlank);
+        } else if (point.equals("no57")) {
+            updatePoint(no57, isBlank);
+        } else if (point.equals("no58")) {
+            updatePoint(no58, isBlank);
+        } else if (point.equals("no59")) {
+            updatePoint(no59, isBlank);
+        } else if (point.equals("no60")) {
+            updatePoint(no60, isBlank);
+        } else if (point.equals("no61")) {
+            updatePoint(no61, isBlank);
+        } else if (point.equals("no62")) {
+            updatePoint(no62, isBlank);
+        } else if (point.equals("no63")) {
+            updatePoint(no63, isBlank);
+        } else if (point.equals("no64")) {
+            updatePoint(no64, isBlank);
+        } else if (point.equals("no65")) {
+            updatePoint(no65, isBlank);
+        } else if (point.equals("no66")) {
+            updatePoint(no66, isBlank);
+        } else if (point.equals("no67")) {
+            updatePoint(no67, isBlank);
+        } else if (point.equals("no68")) {
+            updatePoint(no68, isBlank);
+        } else if (point.equals("no69")) {
+            updatePoint(no69, isBlank);
+        } else if (point.equals("no70")) {
+            updatePoint(no70, isBlank);
+        } else if (point.equals("no71")) {
+            updatePoint(no71, isBlank);
+        } else if (point.equals("no72")) {
+            updatePoint(no72, isBlank);
         }
     }
 

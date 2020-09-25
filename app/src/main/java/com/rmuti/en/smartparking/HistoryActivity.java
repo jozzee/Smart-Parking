@@ -66,10 +66,10 @@ public class HistoryActivity extends AppCompatActivity {
         historyRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("Database", "onDataChange");
                 if (dataSnapshot.exists()) {
                     ArrayList<HistoryModel> list = new ArrayList<>();
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
+
                         HistoryModel historyModel = data.getValue(HistoryModel.class);
                         list.add(historyModel);
                     }
