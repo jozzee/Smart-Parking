@@ -2,3 +2,6 @@
 Key Store Password: supachai1234
 Alias:              Dookza97
 Key Password:       supachai1234
+
+SHA1: DB:76:1A:CE:80:B5:91:F2:11:75:03:E8:C2:7F:75:2A:E7:AD:44:02
+SHA256: AF:8D:80:FF:85:A5:D8:F0:6E:9E:32:70:43:73:4F:55:5B:A6:09:CC:86:50:75:C8:A6:A4:64:73:A4:40:8C:85
