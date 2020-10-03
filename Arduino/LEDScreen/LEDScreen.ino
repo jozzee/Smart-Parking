@@ -1,13 +1,19 @@
+#include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
-#include <SPI.h>
-#include <ArduinoJson.h>
 #include <FirebaseArduino.h>
+#include <SPI.h>
 #include <Ticker.h>
-#include "PxMatrix.h"
-#include "CharactersData.h"
 
-Ticker display_ticker;
+#include "CharactersData.h"
+#include "PxMatrix.h"
+
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+
+#define FIREBASE_HOST "project-cb8fd.firebaseio.com"  //https://project-cb8fd.firebaseio.com
+#define FIREBASE_KEY "vAPQvwMb190kRe1Fc9pwAtBUmxDz1FoCg5XweFfo"
+
 #define P_LAT 16
 #define P_A 5
 #define P_B 4
@@ -15,6 +21,7 @@ Ticker display_ticker;
 #define P_D 12
 #define P_E 0
 #define P_OE 2
+Ticker display_ticker;
 
 // Pins for LED MATRIX
 uint8_t display_draw_time = 0;
@@ -450,9 +457,66 @@ void pixel_time_test(uint8_t draw_time) {
     display_update_enable(false);
 }
 
+void connectWiFiRmuti() {
+    char ssid[] = "@RMUTI-WiFi";
+    char pass[] = "";
+
+    Serial.print(F("Connecting to: "));
+    Serial.println(ssid);
+    WiFi.begin(ssid, pass);
+
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print(".");
+        delay(500);
+    }
+
+    HTTPClient http;
+    http.begin("http://afw-kkc.rmuti.ac.th/login.php?r004335174&url=http://www.msftconnecttest.com/redirect");
+    Serial.print("[HTTP] POST...\n");
+    int httpCode = http.POST("_u: narongchai.ph_p: 0944366656a: aweb_host: afw-kkc.rmuti.ac.thweb_host4: afw4-kkc.rmuti.ac.th_ip4: 172.25.170.171web_host6: _ip6: ");
+    if (httpCode > 0) {
+        Serial.println("[HTTP] POST... code: %d\n " + httpCode);
+        if (httpCode == HTTP_CODE_OK) {
+            Serial.println("Yes....You can do it");
+        }
+    } else {
+        Serial.println("[HTTP] POST... failed, error: %s\n");
+        Serial.println(http.errorToString(httpCode).c_str());
+    }
+    http.end();
+}
+
+void connectWiFi() {
+    printLedConnectingWifi(WIFI_SSID);
+    Serial.print(F("Connecting to: "));
+    Serial.println(WIFI_SSID);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    Serial.print("connecting");
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print(".");
+        delay(500);
+    }
+    //digitalWrite(LED_NODE, HIGH);
+    printLedIpAddress();
+    Serial.println(F(""));
+    Serial.println(F("WiFi connected"));
+    Serial.print(F("IP address: "));
+    Serial.println(WiFi.localIP());
+    
+}
+
+void printLedConnectingWifi(String ssid) {
+    TD_normal_row = 11;
+    TD_color = myBLUE;
+    TD_LEDScrollText("Connecting to: " + ssid + "...");
+}
+
+void printLedIpAddress() {
+    TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP().toString());
+}
+
 void setup() {
     Serial.begin(115200);
-    Serial.println("Test");
 
     // Define your display layout here, e.g. 1/8 step
     display.begin(16);
@@ -462,6 +526,10 @@ void setup() {
     display.setFastUpdate(true);
 
     //  display_update_enable(false);
+
+    //Connecting to WiFi and initial time
+    connectWiFi();
+    //connectWiFiRmuti();
 }
 union single_double {
     uint8_t two[2];
@@ -531,11 +599,11 @@ void m_3() {
     TD_LEDScrollText((String) char(219) + "  Thanks for watching  " + (String) char(219));
 }
 
-void testFullText(){
-  TD_color = myRED;
-  TD_LEDText("Full");
+void testFullText() {
+    TD_color = myRED;
+    TD_LEDText("Full");
 }
 
 void loop() {
-   m_3();
+
 }

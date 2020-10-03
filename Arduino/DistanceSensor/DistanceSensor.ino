@@ -147,9 +147,9 @@ void connectWiFi() {
 // }
 
 String getCurrentTime() {
-    //time_t now = time(nullptr);
+    time_t now = time(nullptr);
     //Serial.println(ctime(&now));
-    return "1556704557";//(String(time(&now)));
+    return (String(ctime(&now)));
 }
 
 String createHistory(String act) {
@@ -216,7 +216,7 @@ void setup() {
     //Setup firebase
     Serial.println(F("Setup Fireebase..."));
     Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
-     if (Firebase.success() != 1) {
+    if (Firebase.success() != 1) {
         Serial.print(F("Error: "));
         Serial.println(Firebase.error());
     }
