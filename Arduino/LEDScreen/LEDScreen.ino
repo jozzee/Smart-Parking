@@ -1,15 +1,17 @@
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
-#include <FirebaseArduino.h>
-#include <SPI.h>
+#include <ESP8266WiFiMulti.h>
+#include <FirebaseESP8266.h>
+#include <PxMatrix.h>
 #include <Ticker.h>
+#include <WiFiClientSecureBearSSL.h>
 
 #include "CharactersData.h"
-#include "PxMatrix.h"
 
-#define WIFI_SSID ""
-#define WIFI_PASSWORD ""
+#define WIFI_SSID "BanPorPla6"
+#define WIFI_PASSWORD "25152515"
 
 #define FIREBASE_HOST "project-cb8fd.firebaseio.com"  //https://project-cb8fd.firebaseio.com
 #define FIREBASE_KEY "vAPQvwMb190kRe1Fc9pwAtBUmxDz1FoCg5XweFfo"
@@ -21,6 +23,9 @@
 #define P_D 12
 #define P_E 0
 #define P_OE 2
+
+FirebaseData firebaseData;
+ESP8266WiFiMulti WiFiMulti;
 Ticker display_ticker;
 
 // Pins for LED MATRIX
@@ -204,7 +209,7 @@ int TD_Char2Width(int p_idx) {
     return w + 1;
 }
 
-void TD_LEDWriteText(int p_r, int p_c, String p_text) {
+void TD_LEDWriteText(int p_r, int p_c, String p_text, bool is_clear_display) {
     char c1;
     char c2;
     int w = 0;
@@ -213,9 +218,12 @@ void TD_LEDWriteText(int p_r, int p_c, String p_text) {
     String myText;
 
     myText = p_text;
+    //Serial.println("TD_LEDWriteText: " + myText);
 
     //mx.clear();
-    display.clearDisplay();
+    if (is_clear_display) {
+        display.clearDisplay();
+    }
     display_update_enable(true);
 
     for (int i = 0; i < myText.length(); i++) {
@@ -379,7 +387,7 @@ int TD_LEDTextPixel(String p_text) {
 }
 
 void TD_LEDText(String p_text) {
-    TD_LEDWriteText(TD_normal_row, 1, p_text);
+    TD_LEDWriteText(TD_normal_row, 1, p_text, true);
 }
 
 void TD_LEDScrollText(String p_text) {
@@ -387,7 +395,7 @@ void TD_LEDScrollText(String p_text) {
 
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
-        TD_LEDWriteText(TD_normal_row, i, p_text);
+        TD_LEDWriteText(TD_normal_row, i, p_text, true);
     }
 }
 
@@ -403,13 +411,13 @@ void TD_LEDScrollUpText(String p_text, int p_direction) {
     // up
     if (p_direction == 1)
         for (int i = TD_max_row; i >= -TD_max_row; i--) {
-            TD_LEDWriteText(i, cs, p_text);
+            TD_LEDWriteText(i, cs, p_text, true);
             if (i == TD_normal_row) delay(1000);
         }
     // down
     else
         for (int i = -TD_max_row; i <= TD_max_row + 1; i++) {
-            TD_LEDWriteText(i, cs, p_text);
+            TD_LEDWriteText(i, cs, p_text, true);
             if (i == TD_normal_row) delay(1000);
         }
     TD_led_delay = xdelay;
@@ -487,7 +495,7 @@ void connectWiFiRmuti() {
 }
 
 void connectWiFi() {
-    printLedConnectingWifi(WIFI_SSID);
+    TD_LEDScrollText("Connecting to: " + String(WIFI_SSID) + "...");
     Serial.print(F("Connecting to: "));
     Serial.println(WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -497,23 +505,147 @@ void connectWiFi() {
         delay(500);
     }
     //digitalWrite(LED_NODE, HIGH);
-    printLedIpAddress();
+    TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP());
     Serial.println(F(""));
     Serial.println(F("WiFi connected"));
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
-    
+}
+void getPointStatusThirdParty() {
+    if (Firebase.getString(firebaseData, "/status/no01")) {
+        String name = firebaseData.stringData();
+        String msg = "";
+        if (name == "true") {
+            TD_color = myGREEN;
+            msg = "No1: ว่าง";
+        } else {
+            TD_color = myRED;
+            msg = "No1: ไม่ว่าง";
+        }
+
+        Serial.println(msg);
+        TD_LEDScrollText(msg);
+    } else {
+        Serial.println("Error : " + firebaseData.errorReason());
+    }
+
+    // Serial.println("Get points status");
+    // if (Firebase.getString(firebaseData, "/status")) {
+    //     Serial.println("PASSED");
+    //     Serial.println("PATH: " + firebaseData.dataPath());
+    //     Serial.println("TYPE: " + firebaseData.dataType());
+    //     Serial.print("VALUE: ");
+    //     Serial.println(firebaseData.payload());
+    // } else {
+    //     Serial.println("Error : " + firebaseData.errorReason());
+    // }
 }
 
-void printLedConnectingWifi(String ssid) {
-    TD_normal_row = 11;
-    TD_color = myBLUE;
-    TD_LEDScrollText("Connecting to: " + ssid + "...");
-}
+// void getBlankAndBusyPoints() {
+//     Serial.println("Get Parking Status...");
+//     //Check WiFi connection status
+//     if ((WiFiMulti.run() == WL_CONNECTED)) {
+//         std::unique_ptr<BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
+//         client->setInsecure();
+//         HTTPClient https;
 
-void printLedIpAddress() {
-    TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP().toString());
-}
+//         Serial.println("[HTTPS] begin...");
+//         if (https.begin(*client, "https://" + String(FIREBASE_HOST) + "/status.json")) {  // HTTPS
+
+//             String payload = "";
+//             Serial.println("[HTTPS] GET...");
+//             // start connection and send HTTP header
+//             int httpCode = https.GET();
+
+//             // httpCode will be negative on error
+//             if (httpCode > 0) {
+//                 // HTTP header has been send and Server response header has been handled
+//                 Serial.println("[HTTPS] GET... code: " + String(httpCode));
+
+//                 // file found at server
+//                 if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+//                     //Serial.println("Playload size: " + https.getSize());
+//                     payload = https.getString();
+//                 }
+//             } else {
+//                 Serial.println("[HTTPS] GET... failed, error: " + String(https.errorToString(httpCode).c_str()));
+//             }
+//             https.end();
+
+//             if (payload != "") {
+//                 //Serial.println(payload);
+
+//                 //Serial.println("Playload Length: " + payload.length());
+//                 //payload = "{\"no01\":\"true\",\"no02\":\"false\",\"no03\":\"true\",\"no04\":\"true\",\"no05\":\"true\"}";
+
+//                 const size_t capacity = JSON_OBJECT_SIZE(72) + 820;
+//                 DynamicJsonBuffer jsonBuffer(capacity);
+//                 JsonObject &root = jsonBuffer.parseObject(payload);
+//                 //Serial.println("Is Success: " + root.success());
+//                 //Serial.println("Create blank and all...");
+
+//                 int blank = 0;
+//                 int busy = 0;
+
+//                 for (JsonPair p : root) {
+//                     const char *key = p.key;
+//                     JsonVariant value = p.value;
+//                     String status = value.asString();
+//                     if (status == "true") {
+//                         blank++;
+//                     } else if (status == "false") {
+//                         busy++;
+//                     }
+//                     //Serial.println("Index: " + String(all) + ", Key: " + String(key) + ", Value: " + status);
+//                 }
+
+//                 // for (int i = 1; i <= 72; i++) {
+//                 //     String key = "no";
+//                 //     if (i < 10) {
+//                 //         key = key + "0";
+//                 //     }
+//                 //     key = key + String(i);
+//                 //     String value = root[key];
+//                 //     Serial.println(key + ": " + value);
+//                 // }
+
+//                 Serial.println("Blank: " + String(blank) + ", Busy: " + String(busy));
+//                 root.operator delete;
+//                 jsonBuffer.clear();
+//             }
+//         } else {
+//             Serial.println("[HTTPS] Unable to connect");
+//         }
+//         https.end();
+//         client.release();
+//     }
+// }
+
+// void printBlankAndBussy(int blank, int bussy) {
+//     display.clearDisplay();
+//     TD_normal_row = 4;
+//     TD_color = myGREEN;
+//     delay(1000);
+//     //TD_LEDWriteText(TD_normal_row, 1, String("ว่าง: " + String(blank)), false);
+//     // TD_normal_row = 18;
+//     // TD_color = myRED;
+//     // TD_LEDWriteText(TD_normal_row, 1, "จอด: " + String(blank), false);
+// }
+
+// void testJson() {
+//     String payload = "{\"no01\":\"true\",\"no02\":\"false\",\"no03\":\"true\",\"no04\":\"true\",\"no05\":\"true\"}";
+//     StaticJsonBuffer<200> jsonBuffer;
+//     JsonObject &root = jsonBuffer.parseObject(payload);
+
+//     //String statusNo01 = root["no01"];
+//     //Serial.println("Json no01: " + statusNo01);
+
+//     for (JsonPair p : root) {
+//         const char *key = p.key;
+//         JsonVariant value = p.value;
+//         Serial.println("Key: " + String(key) + ", Value: " + value.asString());
+//     }
+// }
 
 void setup() {
     Serial.begin(115200);
@@ -527,9 +659,33 @@ void setup() {
 
     //  display_update_enable(false);
 
+    TD_normal_row = 11;
+    TD_color = myBLUE;
+
     //Connecting to WiFi and initial time
     connectWiFi();
     //connectWiFiRmuti();
+
+    // for (uint8_t t = 4; t > 0; t--) {
+    //     Serial.println("[SETUP] WAIT " + String(t) + "...");
+    //     Serial.flush();
+    //     delay(1000);
+    // }
+    // WiFi.mode(WIFI_STA);
+    // WiFiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
+
+    //Setup firebase
+    Serial.print(F("Setup Fireebase..."));
+    Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
+    Firebase.reconnectWiFi(true);
+    //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
+    firebaseData.setBSSLBufferSize(1024, 1024);
+    //Set the size of HTTP response buffers in the case where we want to work with large data.
+    firebaseData.setResponseSize(1024);
+    Serial.println(F("Completed"));
+
+    //getPointStatus();
+    //getBlankPointsAndAllPoints();
 }
 union single_double {
     uint8_t two[2];
@@ -605,5 +761,7 @@ void testFullText() {
 }
 
 void loop() {
-
+    //getBlankAndBusyPoints();
+    getPointStatusThirdParty();
+    delay(10000);
 }
