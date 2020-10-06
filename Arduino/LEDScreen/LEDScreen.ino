@@ -24,10 +24,14 @@
 #define P_E 0
 #define P_OE 2
 
-FirebaseData firebaseData;
 ESP8266WiFiMulti WiFiMulti;
-Ticker display_ticker;
 
+FirebaseData firebaseData;
+String blank;
+String busy;
+bool isTimeOut = false;
+
+Ticker display_ticker;
 // Pins for LED MATRIX
 uint8_t display_draw_time = 0;
 
@@ -512,36 +516,65 @@ void connectWiFi() {
     Serial.println(WiFi.localIP());
 }
 void getPointStatusThirdParty() {
-    if (Firebase.getString(firebaseData, "/status/no01")) {
-        String name = firebaseData.stringData();
-        String msg = "";
-        if (name == "true") {
-            TD_color = myGREEN;
-            msg = "No1: ว่าง";
-        } else {
-            TD_color = myRED;
-            msg = "No1: ไม่ว่าง";
-        }
+    if (Firebase.getString(firebaseData, "/count/all")) {
+        String all = firebaseData.stringData();
+        int commaIndex = all.indexOf(',');
 
-        Serial.println(msg);
-        TD_LEDScrollText(msg);
+        blank = all.substring(0, commaIndex);
+        busy = all.substring(commaIndex + 1, all.length());
+        Serial.println("Blank: " + blank + ", Busy: " + busy);
+        Serial.println("Blank: " + blank + ", Busy: " + busy);
+        printBlankAndBusy();
     } else {
         Serial.println("Error : " + firebaseData.errorReason());
     }
-
-    // Serial.println("Get points status");
-    // if (Firebase.getString(firebaseData, "/status")) {
-    //     Serial.println("PASSED");
-    //     Serial.println("PATH: " + firebaseData.dataPath());
-    //     Serial.println("TYPE: " + firebaseData.dataType());
-    //     Serial.print("VALUE: ");
-    //     Serial.println(firebaseData.payload());
-    // } else {
-    //     Serial.println("Error : " + firebaseData.errorReason());
-    // }
 }
 
-// void getBlankAndBusyPoints() {
+void streamCallback(StreamData data) {
+    String all = data.stringData();
+    int commaIndex = all.indexOf(',');
+    blank = all.substring(0, commaIndex);
+    busy = all.substring(commaIndex + 1, all.length());
+    //Serial.println("Stream call bacl, Blank: " + blank + ", Busy: " + busy);
+    if (isTimeOut) {
+        isTimeOut = false;
+        printProjectName();
+    }
+    printBlankAndBusy();
+}
+
+void streamTimeoutCallback(bool timeout) {
+    isTimeOut = timeout;
+    if (timeout) {
+        Serial.println("Stream timeout, resume streaming...");
+    }
+}
+
+void printBlankAndBusy() {
+    if (busy.toInt() >= 72) {
+        TD_normal_row = 11;
+        TD_color = myRED;
+        TD_LEDScrollText("Full");
+        //Serial.println("Print Full");
+        return;
+    }
+    TD_normal_row = 4;
+    TD_color = myGREEN;
+    TD_LEDWriteText(TD_normal_row, 1, "ว่าง: " + blank, true);
+    TD_normal_row = 18;
+    TD_color = myRED;
+    TD_LEDWriteText(TD_normal_row, 1, "จอด: " + busy, false);
+    //Serial.println("Print Blank an Busy");
+}
+
+void printProjectName() {
+    TD_normal_row = 11;
+    TD_color = myBLUE;
+    TD_LEDScrollText("RMUTI Start Parking!!");
+    Serial.println("Print project name");
+}
+
+// void getBlankAndBusyPointsWithHttps() {
 //     Serial.println("Get Parking Status...");
 //     //Check WiFi connection status
 //     if ((WiFiMulti.run() == WL_CONNECTED)) {
@@ -621,17 +654,6 @@ void getPointStatusThirdParty() {
 //     }
 // }
 
-// void printBlankAndBussy(int blank, int bussy) {
-//     display.clearDisplay();
-//     TD_normal_row = 4;
-//     TD_color = myGREEN;
-//     delay(1000);
-//     //TD_LEDWriteText(TD_normal_row, 1, String("ว่าง: " + String(blank)), false);
-//     // TD_normal_row = 18;
-//     // TD_color = myRED;
-//     // TD_LEDWriteText(TD_normal_row, 1, "จอด: " + String(blank), false);
-// }
-
 // void testJson() {
 //     String payload = "{\"no01\":\"true\",\"no02\":\"false\",\"no03\":\"true\",\"no04\":\"true\",\"no05\":\"true\"}";
 //     StaticJsonBuffer<200> jsonBuffer;
@@ -682,6 +704,10 @@ void setup() {
     firebaseData.setBSSLBufferSize(1024, 1024);
     //Set the size of HTTP response buffers in the case where we want to work with large data.
     firebaseData.setResponseSize(1024);
+    Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
+    if (!Firebase.beginStream(firebaseData, "/count/all")) {
+        Serial.println("Error : " + firebaseData.errorReason());
+    }
     Serial.println(F("Completed"));
 
     //getPointStatus();
@@ -762,6 +788,6 @@ void testFullText() {
 
 void loop() {
     //getBlankAndBusyPoints();
-    getPointStatusThirdParty();
-    delay(10000);
+    //getPointStatusThirdParty();
+    //delay(10000);
 }
