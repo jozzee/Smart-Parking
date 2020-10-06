@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="/__/firebase/7.22.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script src="/__/firebase/7.22.1/firebase-database.js"></script>
+    <script>
+        // TODO: Replace the following with your app's Firebase project configuration
+        // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
+        var firebaseConfig = {
+            apiKey: "AIzaSyCac4gye_yvR1SDL0u1Wi3DJAzJjjib4Og",
+            authDomain: "project-cb8fd.firebaseapp.com",
+            databaseURL: "https://project-cb8fd.firebaseio.com",
+            projectId: "project-cb8fd",
+            storageBucket: "project-cb8fd.appspot.com",
+            messagingSenderId: "897024666361",
+            appId: "1:897024666361:web:5bacb2df6d6e8a993e5028"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        // Get a reference to the database service
+
+        // Get a reference to the database service
+        var database = firebase.database();
+        database.ref('/status').once('value').then(snap => {
+            var blank = 0
+            var bussy = 0
+            snap.forEach(function (point) {
+                //console.log("Key: " + point.key + ", Value: " + point.val());
+                var status = point.val();
+                if (status == "true") {
+                    blank++;
+                } else if (status == "false") {
+                    bussy++;
+                }
+            });
+            console.log("Blank: " + blank + ", Bussy: " + bussy);
+            database.ref('/count/blank').set(blank);
+            database.ref('/count/busy').set(bussy);
+            document.write("{\"blank\":" + blank + ",\"busy\":" + bussy + "}");
+        });
+    </script>
+</body>
+
+</html>
