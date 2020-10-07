@@ -34,6 +34,7 @@ bool isTimeOut = false;
 Ticker display_ticker;
 // Pins for LED MATRIX
 uint8_t display_draw_time = 0;
+bool isWritingLed = false;
 
 //PxMATRIX display(32,16,P_LAT, P_OE,P_A,P_B,P_C);
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
@@ -400,7 +401,15 @@ void TD_LEDScrollText(String p_text) {
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
         TD_LEDWriteText(TD_normal_row, i, p_text, true);
-        delay(1000);
+    }
+}
+
+void TD_LEDScrollText(String p_text, unsigned long ms) {
+    int n;
+    n = TD_LEDTextPixel(p_text);
+    for (int i = TD_max_col; i >= n * -1; i--) {
+        TD_LEDWriteText(TD_normal_row, i, p_text, true);
+        delay(ms);
     }
 }
 
@@ -500,7 +509,7 @@ void connectWiFiRmuti() {
 }
 
 void connectWiFi() {
-    //TD_LEDScrollText("Connecting to: " + String(WIFI_SSID) + "...");
+    TD_LEDScrollText("Connecting to: " + String(WIFI_SSID) + "...");
     Serial.print(F("Connecting to: "));
     Serial.println(WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -510,7 +519,7 @@ void connectWiFi() {
         delay(500);
     }
     //digitalWrite(LED_NODE, HIGH);
-    //TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP());
+    TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP());
     Serial.println(F(""));
     Serial.println(F("WiFi connected"));
     Serial.print(F("IP address: "));
@@ -539,7 +548,7 @@ void streamCallback(StreamData data) {
     //Serial.println("Stream call bacl, Blank: " + blank + ", Busy: " + busy);
     if (isTimeOut) {
         isTimeOut = false;
-        printProjectName();
+        writeProjectNameToLed();
     }
     printBlankAndBusy();
 }
@@ -572,10 +581,10 @@ void printBlankAndBusy() {
     //Serial.println("Print Blank an Busy");
 }
 
-void printProjectName() {
+void writeProjectNameToLed() {
     TD_normal_row = 11;
     TD_color = myBLUE;
-    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย ครับ");
+    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย ครับ", 60);
     Serial.println("Print project name");
 }
 
@@ -794,5 +803,5 @@ void loop() {
     //getPointStatusThirdParty();
     //delay(10000);
 
-    printProjectName();
+    writeProjectNameToLed();
 }
