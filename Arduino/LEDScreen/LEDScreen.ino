@@ -400,6 +400,7 @@ void TD_LEDScrollText(String p_text) {
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
         TD_LEDWriteText(TD_normal_row, i, p_text, true);
+        delay(1000);
     }
 }
 
@@ -499,7 +500,7 @@ void connectWiFiRmuti() {
 }
 
 void connectWiFi() {
-    TD_LEDScrollText("Connecting to: " + String(WIFI_SSID) + "...");
+    //TD_LEDScrollText("Connecting to: " + String(WIFI_SSID) + "...");
     Serial.print(F("Connecting to: "));
     Serial.println(WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -509,7 +510,7 @@ void connectWiFi() {
         delay(500);
     }
     //digitalWrite(LED_NODE, HIGH);
-    TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP());
+    //TD_LEDScrollText("WiFi connected, IP: " + WiFi.localIP());
     Serial.println(F(""));
     Serial.println(F("WiFi connected"));
     Serial.print(F("IP address: "));
@@ -551,6 +552,10 @@ void streamTimeoutCallback(bool timeout) {
 }
 
 void printBlankAndBusy() {
+    //Restet text size;
+    TD_max_char_row1 = 10;
+    TD_max_char_row2 = 12;
+
     if (busy.toInt() >= 72) {
         TD_normal_row = 11;
         TD_color = myRED;
@@ -570,7 +575,7 @@ void printBlankAndBusy() {
 void printProjectName() {
     TD_normal_row = 11;
     TD_color = myBLUE;
-    TD_LEDScrollText("RMUTI Start Parking!!");
+    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย ครับ");
     Serial.println("Print project name");
 }
 
@@ -684,10 +689,11 @@ void setup() {
     TD_normal_row = 11;
     TD_color = myBLUE;
 
-    //Connecting to WiFi and initial time
+    //Connecting to WiFi (normal mode) and initial time
     connectWiFi();
     //connectWiFiRmuti();
 
+    //Connect WiFi in WIFI_STA Mode
     // for (uint8_t t = 4; t > 0; t--) {
     //     Serial.println("[SETUP] WAIT " + String(t) + "...");
     //     Serial.flush();
@@ -696,22 +702,19 @@ void setup() {
     // WiFi.mode(WIFI_STA);
     // WiFiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
 
-    //Setup firebase
-    Serial.print(F("Setup Fireebase..."));
-    Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
-    Firebase.reconnectWiFi(true);
-    //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
-    firebaseData.setBSSLBufferSize(1024, 1024);
-    //Set the size of HTTP response buffers in the case where we want to work with large data.
-    firebaseData.setResponseSize(1024);
-    Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
-    if (!Firebase.beginStream(firebaseData, "/count/all")) {
-        Serial.println("Error : " + firebaseData.errorReason());
-    }
-    Serial.println(F("Completed"));
-
-    //getPointStatus();
-    //getBlankPointsAndAllPoints();
+    // //Setup firebase
+    // Serial.print(F("Setup Fireebase..."));
+    // Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
+    // Firebase.reconnectWiFi(true);
+    // //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
+    // firebaseData.setBSSLBufferSize(1024, 1024);
+    // //Set the size of HTTP response buffers in the case where we want to work with large data.
+    // firebaseData.setResponseSize(1024);
+    // Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
+    // if (!Firebase.beginStream(firebaseData, "/count/all")) {
+    //    Serial.println("Error : " + firebaseData.errorReason());
+    // }
+    // Serial.println(F("Completed"));
 }
 union single_double {
     uint8_t two[2];
@@ -790,4 +793,6 @@ void loop() {
     //getBlankAndBusyPoints();
     //getPointStatusThirdParty();
     //delay(10000);
+
+    printProjectName();
 }
