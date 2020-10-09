@@ -29,12 +29,12 @@ ESP8266WiFiMulti WiFiMulti;
 FirebaseData firebaseData;
 String blank;
 String busy;
-bool isTimeOut = false;
 
 Ticker display_ticker;
 // Pins for LED MATRIX
 uint8_t display_draw_time = 0;
 bool isWritingLed = false;
+long currentTime = 0;
 
 //PxMATRIX display(32,16,P_LAT, P_OE,P_A,P_B,P_C);
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
@@ -534,7 +534,7 @@ void getPointStatusThirdParty() {
         busy = all.substring(commaIndex + 1, all.length());
         Serial.println("Blank: " + blank + ", Busy: " + busy);
         Serial.println("Blank: " + blank + ", Busy: " + busy);
-        printBlankAndBusy();
+        writeBlankAndBusyToLed();
     } else {
         Serial.println("Error : " + firebaseData.errorReason());
     }
@@ -546,21 +546,16 @@ void streamCallback(StreamData data) {
     blank = all.substring(0, commaIndex);
     busy = all.substring(commaIndex + 1, all.length());
     //Serial.println("Stream call bacl, Blank: " + blank + ", Busy: " + busy);
-    if (isTimeOut) {
-        isTimeOut = false;
-        writeProjectNameToLed();
-    }
-    printBlankAndBusy();
+    writeBlankAndBusyToLed();
 }
 
 void streamTimeoutCallback(bool timeout) {
-    isTimeOut = timeout;
     if (timeout) {
         Serial.println("Stream timeout, resume streaming...");
     }
 }
 
-void printBlankAndBusy() {
+void writeBlankAndBusyToLed() {
     //Restet text size;
     TD_max_char_row1 = 10;
     TD_max_char_row2 = 12;
@@ -568,16 +563,16 @@ void printBlankAndBusy() {
     if (busy.toInt() >= 72) {
         TD_normal_row = 11;
         TD_color = myRED;
-        TD_LEDScrollText("Full");
+        TD_LEDWriteText(TD_normal_row, 18, "เต็ม", true);
         //Serial.println("Print Full");
         return;
     }
     TD_normal_row = 4;
     TD_color = myGREEN;
-    TD_LEDWriteText(TD_normal_row, 1, "ว่าง: " + blank, true);
+    TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
     TD_normal_row = 18;
     TD_color = myRED;
-    TD_LEDWriteText(TD_normal_row, 1, "จอด: " + busy, false);
+    TD_LEDWriteText(TD_normal_row, 9, "จอด: " + busy, false);
     //Serial.println("Print Blank an Busy");
 }
 
@@ -711,19 +706,21 @@ void setup() {
     // WiFi.mode(WIFI_STA);
     // WiFiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
 
-    // //Setup firebase
-    // Serial.print(F("Setup Fireebase..."));
-    // Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
-    // Firebase.reconnectWiFi(true);
-    // //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
-    // firebaseData.setBSSLBufferSize(1024, 1024);
-    // //Set the size of HTTP response buffers in the case where we want to work with large data.
-    // firebaseData.setResponseSize(1024);
-    // Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
-    // if (!Firebase.beginStream(firebaseData, "/count/all")) {
-    //    Serial.println("Error : " + firebaseData.errorReason());
-    // }
-    // Serial.println(F("Completed"));
+    //Setup firebase
+    Serial.print(F("Setup Fireebase..."));
+    Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
+    Firebase.reconnectWiFi(true);
+    //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
+    firebaseData.setBSSLBufferSize(1024, 1024);
+    //Set the size of HTTP response buffers in the case where we want to work with large data.
+    firebaseData.setResponseSize(1024);
+    Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
+    if (!Firebase.beginStream(firebaseData, "/count/all")) {
+        Serial.println("Error : " + firebaseData.errorReason());
+    }
+    Serial.println(F("Completed"));
+    writeProjectNameToLed();
+    currentTime = millis();
 }
 union single_double {
     uint8_t two[2];
@@ -802,6 +799,8 @@ void loop() {
     //getBlankAndBusyPoints();
     //getPointStatusThirdParty();
     //delay(10000);
-
-    writeProjectNameToLed();
+    if (currentTime > 60000) {
+        currentTime = millis();
+        writeProjectNameToLed();
+    }
 }
