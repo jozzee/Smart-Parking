@@ -721,6 +721,7 @@ void setup() {
     Serial.println(F("Completed"));
     writeProjectNameToLed();
     currentTime = millis();
+    Serial.println("Current Tine: " + currentTime);
 }
 union single_double {
     uint8_t two[2];
@@ -803,4 +804,5 @@ void loop() {
         currentTime = millis();
         writeProjectNameToLed();
     }
+    Serial.println("Current Tine: " + currentTime);
 }
