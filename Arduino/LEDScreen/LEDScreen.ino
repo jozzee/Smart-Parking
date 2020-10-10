@@ -799,7 +799,7 @@ void loop() {
     //getBlankAndBusyPoints();
     //getPointStatusThirdParty();
     //delay(10000);
-    if (currentTime > 60000) {
+    if (currentTime + 600000 < millis()) {
         currentTime = millis();
         writeProjectNameToLed();
     }
