@@ -34,7 +34,7 @@ Ticker display_ticker;
 // Pins for LED MATRIX
 uint8_t display_draw_time = 0;
 bool isWritingLed = false;
-unsigned long currentTime = 0;
+//unsigned long currentTime = 0;
 
 //PxMATRIX display(32,16,P_LAT, P_OE,P_A,P_B,P_C);
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
@@ -719,9 +719,7 @@ void setup() {
     //     Serial.println("Error : " + firebaseData.errorReason());
     // }
     Serial.println(F("Completed"));
-    writeProjectNameToLed();
-    currentTime = millis();
-    Serial.println("Current Tine: " + currentTime);
+    //writeProjectNameToLed();
 }
 union single_double {
     uint8_t two[2];
@@ -800,9 +798,7 @@ void loop() {
     //getBlankAndBusyPoints();
     //getPointStatusThirdParty();
     //delay(10000);
-    if (currentTime + 600000 < millis()) {
-        currentTime = millis();
-        writeProjectNameToLed();
-    }
-    Serial.println("Current Tine: " + currentTime);
+    writeProjectNameToLed();
+    delay(3000);
+    Serial.println("Test: ");
 }
