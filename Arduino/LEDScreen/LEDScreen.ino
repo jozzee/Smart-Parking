@@ -555,25 +555,45 @@ void streamTimeoutCallback(bool timeout) {
     }
 }
 
+// void writeBlankAndBusyToLed() {
+//     //Restet text size;
+//     TD_max_char_row1 = 10;
+//     TD_max_char_row2 = 12;
+
+//     if (busy.toInt() >= 72) {
+//         TD_normal_row = 11;
+//         TD_color = myRED;
+//         TD_LEDWriteText(TD_normal_row, 18, "เต็ม", true);
+//         //Serial.println("Print Full");
+//         return;
+//     }
+//     TD_normal_row = 4;
+//     TD_color = myGREEN;
+//     TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
+//     TD_normal_row = 18;
+//     TD_color = myRED;
+//     TD_LEDWriteText(TD_normal_row, 9, "จอด: " + busy, false);
+//     //Serial.println("Print Blank an Busy");
+// }
+
 void writeBlankAndBusyToLed() {
     //Restet text size;
     TD_max_char_row1 = 10;
     TD_max_char_row2 = 12;
 
     if (busy.toInt() >= 72) {
-        TD_normal_row = 11;
-        TD_color = myRED;
-        TD_LEDWriteText(TD_normal_row, 18, "เต็ม", true);
-        //Serial.println("Print Full");
+        writeFullToLed();
         return;
     }
+
     TD_normal_row = 4;
     TD_color = myGREEN;
     TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
-    TD_normal_row = 18;
     TD_color = myRED;
-    TD_LEDWriteText(TD_normal_row, 9, "จอด: " + busy, false);
-    //Serial.println("Print Blank an Busy");
+    TD_LEDWriteText(TD_normal_row, 70, "จอด: " + busy, false);
+}
+
+void writeFullToLed() {
 }
 
 void writeProjectNameToLed() {
@@ -711,13 +731,13 @@ void setup() {
     Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
     Firebase.reconnectWiFi(true);
     //Set the size of WiFi rx/tx buffers in the case where we want to work with large data.
-    //firebaseData.setBSSLBufferSize(1024, 1024);
+    firebaseData.setBSSLBufferSize(1024, 1024);
     //Set the size of HTTP response buffers in the case where we want to work with large data.
-    //firebaseData.setResponseSize(1024);
-    // Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
-    // if (!Firebase.beginStream(firebaseData, "/count/all")) {
-    //     Serial.println("Error : " + firebaseData.errorReason());
-    // }
+    firebaseData.setResponseSize(1024);
+    Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
+    if (!Firebase.beginStream(firebaseData, "/count/all")) {
+        Serial.println("Error : " + firebaseData.errorReason());
+    }
     Serial.println(F("Completed"));
     //writeProjectNameToLed();
 }
@@ -795,10 +815,4 @@ void testFullText() {
 }
 
 void loop() {
-    //getBlankAndBusyPoints();
-    //getPointStatusThirdParty();
-    //delay(10000);
-    writeProjectNameToLed();
-    delay(3000);
-    Serial.println("Test: ");
 }
