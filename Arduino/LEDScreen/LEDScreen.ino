@@ -578,8 +578,8 @@ void streamTimeoutCallback(bool timeout) {
 
 void writeBlankAndBusyToLed() {
     //Restet text size;
-    TD_max_char_row1 = 10;
-    TD_max_char_row2 = 12;
+    TD_max_char_row1 = 12;
+    TD_max_char_row2 = 14;
 
     if (busy.toInt() >= 72) {
         writeFullToLed();
