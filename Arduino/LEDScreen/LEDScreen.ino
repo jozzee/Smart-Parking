@@ -6,6 +6,7 @@
 #include <FirebaseESP8266.h>
 #include <PxMatrix.h>
 #include <Ticker.h>
+#include <TimeLib.h>
 #include <WiFiClientSecureBearSSL.h>
 
 #include "CharactersData.h"
@@ -404,11 +405,11 @@ void TD_LEDScrollText(String p_text) {
     }
 }
 
-void TD_LEDScrollText(String p_text, unsigned long ms) {
+void TD_LEDScrollText(String p_text, unsigned long ms, bool is_clear_display) {
     int n;
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
-        TD_LEDWriteText(TD_normal_row, i, p_text, true);
+        TD_LEDWriteText(TD_normal_row, i, p_text, is_clear_display);
         delay(ms);
     }
 }
@@ -578,8 +579,8 @@ void streamTimeoutCallback(bool timeout) {
 
 void writeBlankAndBusyToLed() {
     //Restet text size;
-    TD_max_char_row1 = 12;
-    TD_max_char_row2 = 14;
+    TD_max_char_row1 = 10;
+    TD_max_char_row2 = 12;
 
     if (busy.toInt() >= 72) {
         writeFullToLed();
@@ -599,10 +600,27 @@ void writeFullToLed() {
 void writeProjectNameToLed() {
     TD_normal_row = 11;
     TD_color = myBLUE;
-    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย ครับ", 60);
+    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย", 20, false);
+    TD_LEDScrollText("Parking FACULTY ENGINEERING RMUTI KKC", 20, false);
+    TD_LEDScrollText(getCurrentTime(), 20, false);
     Serial.println("Print project name");
 }
 
+String getCurrentTime() {
+    time_t now = time(nullptr);
+    setTime(now);
+    String dateTime = "";
+    dateTime = dateTime + String(day(now));
+    dateTime = dateTime + "/";
+    dateTime = dateTime + String(month(now));
+    dateTime = dateTime + "/";
+    dateTime = dateTime + String((year(now) + 543));
+    dateTime = dateTime + " ";
+    dateTime = dateTime + String((hour(now) + 7));
+    dateTime = dateTime + ":";
+    dateTime = dateTime + String(minute(now));
+    return dateTime;
+}
 // void getBlankAndBusyPointsWithHttps() {
 //     Serial.println("Get Parking Status...");
 //     //Check WiFi connection status
@@ -739,6 +757,7 @@ void setup() {
         Serial.println("Error : " + firebaseData.errorReason());
     }
     Serial.println(F("Completed"));
+    Serial.println(getCurrentTime());
     //writeProjectNameToLed();
 }
 union single_double {
@@ -815,4 +834,5 @@ void testFullText() {
 }
 
 void loop() {
+    writeProjectNameToLed();
 }
