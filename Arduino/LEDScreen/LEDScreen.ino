@@ -405,11 +405,11 @@ void TD_LEDScrollText(String p_text) {
     }
 }
 
-void TD_LEDScrollText(String p_text, unsigned long ms, bool is_clear_display) {
+void TD_LEDScrollText(String p_text, unsigned long ms) {
     int n;
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
-        TD_LEDWriteText(TD_normal_row, i, p_text, is_clear_display);
+        TD_LEDWriteText(TD_normal_row, i, p_text, true);
         delay(ms);
     }
 }
@@ -600,9 +600,9 @@ void writeFullToLed() {
 void writeProjectNameToLed() {
     TD_normal_row = 11;
     TD_color = myBLUE;
-    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย", 20, false);
-    TD_LEDScrollText("Parking FACULTY ENGINEERING RMUTI KKC", 20, false);
-    TD_LEDScrollText(getCurrentTime(), 20, false);
+    TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย", 20);
+    TD_LEDScrollText("Parking FACULTY ENGINEERING RMUTI KKC", 20);
+    TD_LEDScrollText(getCurrentTime(), 20);
     Serial.println("Print project name");
 }
 
