@@ -592,9 +592,9 @@ void writeBlankAndBusyToLed() {
     TD_max_char_row1 = 10;
     TD_max_char_row2 = 12;
     TD_normal_row = 4;
-
+    
     TD_color = myGREEN;
-    TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, false);
+    TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
     TD_color = myRED;
     TD_LEDWriteText(TD_normal_row, 70, "จอด: " + busy, false);
 }
@@ -616,116 +616,116 @@ void writeMainLed(String p_text) {
     int n;
     n = TD_LEDTextPixel(p_text);
     for (int i = TD_max_col; i >= n * -1; i--) {
-        TD_normal_row = 18;
-        TD_color = myBLUE;
-        TD_LEDWriteText(TD_normal_row, i, p_text, true);
-        writeBlankAndBusyToLed();
+        TD_LEDWriteText2(TD_normal_row, i, p_text);
         delay(ms);
     }
 }
 
-// void TD_LEDWriteText2(int p_r, int p_c, String p_text) {
-//     //mx.clear();
+void TD_LEDWriteText2(int p_r, int p_c, String p_text) {
+    //mx.clear();
+    writeBlankAndBusyToLed();
+    TD_normal_row = 18;
+    TD_color = myBLUE;
 
-//     char c1;
-//     char c2;
-//     int w = 0;
-//     int idx = 0;
-//     int normal;
-//     String myText;
-//     myText = p_text;
-//     //Serial.println("TD_LEDWriteText: " + myText);
+    char c1;
+    char c2;
+    int w = 0;
+    int idx = 0;
+    int normal;
+    String myText;
+    myText = p_text;
+    //Serial.println("TD_LEDWriteText: " + myText);
 
-//     display_update_enable(true);
+    display_update_enable(true);
 
-//     for (int i = 0; i < myText.length(); i++) {
-//         c1 = myText[i];
-//         // E0 224 Thai
-//         if ((int)c1 == 224) {
-//             c1 = myText[i + 1];
-//             c2 = myText[i + 2];
-//             // B8,81(129)  ก - ฮ
-//             if ((int)c1 == 184 && ((int)c2 + 32) >= 161 && ((int)c2 + 32) <= 207) {
-//                 // ก 81 = 129 --> +32 --> 161
-//                 idx = (int)c2 + 32;
-//             }
-//             // B8,B0(176)  สระ
-//             if ((int)c1 == 184 && ((int)c2 + 32) >= 208 && ((int)c2 + 32) <= 218) {
-//                 // ะ B0 = 176 --> +32 --> 208
-//                 idx = (int)c2 + 32;
-//             }
-//             // B9,80(128)  สระ
-//             if ((int)c1 == 185 && ((int)c2 + 96) >= 224 && ((int)c2 + 96) <= 231) {
-//                 // เ 80 = 176 --> +96 --> 224
-//                 idx = (int)c2 + 96;
-//             }
-//             // B9,B0(136)  วรรณยุก
-//             if ((int)c1 == 185 && ((int)c2 + 96) >= 232 && ((int)c2 + 96) <= 238) {
-//                 // ่ 88 = 136 --> +96 --> 208
-//                 idx = (int)c2 + 96;
-//             }
-//             i = i + 2;
-//         } else {
-//             idx = (int)c1;
-//         }
+    for (int i = 0; i < myText.length(); i++) {
+        c1 = myText[i];
+        // E0 224 Thai
+        if ((int)c1 == 224) {
+            c1 = myText[i + 1];
+            c2 = myText[i + 2];
+            // B8,81(129)  ก - ฮ
+            if ((int)c1 == 184 && ((int)c2 + 32) >= 161 && ((int)c2 + 32) <= 207) {
+                // ก 81 = 129 --> +32 --> 161
+                idx = (int)c2 + 32;
+            }
+            // B8,B0(176)  สระ
+            if ((int)c1 == 184 && ((int)c2 + 32) >= 208 && ((int)c2 + 32) <= 218) {
+                // ะ B0 = 176 --> +32 --> 208
+                idx = (int)c2 + 32;
+            }
+            // B9,80(128)  สระ
+            if ((int)c1 == 185 && ((int)c2 + 96) >= 224 && ((int)c2 + 96) <= 231) {
+                // เ 80 = 176 --> +96 --> 224
+                idx = (int)c2 + 96;
+            }
+            // B9,B0(136)  วรรณยุก
+            if ((int)c1 == 185 && ((int)c2 + 96) >= 232 && ((int)c2 + 96) <= 238) {
+                // ่ 88 = 136 --> +96 --> 208
+                idx = (int)c2 + 96;
+            }
+            i = i + 2;
+        } else {
+            idx = (int)c1;
+        }
 
-//         normal = 1;
-//         // thai over
-//         if (TD_IsX1(idx) == 1) {
-//             w = TD_CharWidth(idx);
-//             TD_WriteChar(p_r - 2, p_c - (w + TD_gap_pixel), idx);
-//             normal = 0;
-//         }
-//         // thai under
-//         if (TD_IsX2(idx) == 1) {
-//             w = TD_CharWidth(idx);
-//             TD_WriteChar(p_r + 10, p_c - (w + TD_gap_pixel), idx);
-//             normal = 0;
-//         }
-//         if (normal == 1) {
-//             switch (idx) {
-//                 // space
-//                 case 32:
-//                     p_c = p_c + 4;
-//                     break;
+        normal = 1;
+        // thai over
+        if (TD_IsX1(idx) == 1) {
+            w = TD_CharWidth(idx);
+            TD_WriteChar(p_r - 2, p_c - (w + TD_gap_pixel), idx);
+            normal = 0;
+        }
+        // thai under
+        if (TD_IsX2(idx) == 1) {
+            w = TD_CharWidth(idx);
+            TD_WriteChar(p_r + 10, p_c - (w + TD_gap_pixel), idx);
+            normal = 0;
+        }
+        if (normal == 1) {
+            switch (idx) {
+                // space
+                case 32:
+                    p_c = p_c + 4;
+                    break;
 
-//                 // comma
-//                 case 44:
-//                     TD_WriteChar(p_r + 1, p_c, idx);
-//                     w = TD_CharWidth(idx);
-//                     p_c = p_c + w + TD_gap_pixel;
-//                     break;
+                // comma
+                case 44:
+                    TD_WriteChar(p_r + 1, p_c, idx);
+                    w = TD_CharWidth(idx);
+                    p_c = p_c + w + TD_gap_pixel;
+                    break;
 
-//                 // g j p q y
-//                 case 103:
-//                 case 106:
-//                 case 112:
-//                 case 113:
-//                 case 121:
-//                     TD_WriteChar(p_r + 3, p_c, idx);
-//                     w = TD_CharWidth(idx);
-//                     p_c = p_c + w + TD_gap_pixel;
-//                     break;
+                // g j p q y
+                case 103:
+                case 106:
+                case 112:
+                case 113:
+                case 121:
+                    TD_WriteChar(p_r + 3, p_c, idx);
+                    w = TD_CharWidth(idx);
+                    p_c = p_c + w + TD_gap_pixel;
+                    break;
 
-//                 // ำ
-//                 case 211:
-//                     w = TD_CharWidth(idx);
-//                     TD_WriteChar(p_r, p_c - (3 + TD_gap_pixel), idx);
-//                     p_c = p_c - 3 + w + TD_gap_pixel;
-//                     break;
+                // ำ
+                case 211:
+                    w = TD_CharWidth(idx);
+                    TD_WriteChar(p_r, p_c - (3 + TD_gap_pixel), idx);
+                    p_c = p_c - 3 + w + TD_gap_pixel;
+                    break;
 
-//                 default:
-//                     TD_WriteChar(p_r, p_c, idx);
-//                     w = TD_CharWidth(idx);
-//                     p_c = p_c + w + TD_gap_pixel;
-//                     break;
-//             }
-//         }
-//     }
-//     //mx.MyflushBufferAll();
-//     display.flushDisplay();
-//     delay(TD_led_delay);
-// }
+                default:
+                    TD_WriteChar(p_r, p_c, idx);
+                    w = TD_CharWidth(idx);
+                    p_c = p_c + w + TD_gap_pixel;
+                    break;
+            }
+        }
+    }
+    //mx.MyflushBufferAll();
+    display.flushDisplay();
+    delay(TD_led_delay);
+}
 
 String getCurrentTime() {
     time_t now = time(nullptr);
