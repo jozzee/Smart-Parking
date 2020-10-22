@@ -533,28 +533,38 @@ void getPointStatusThirdParty() {
 
         blank = all.substring(0, commaIndex);
         busy = all.substring(commaIndex + 1, all.length());
-        Serial.println("Blank: " + blank + ", Busy: " + busy);
-        Serial.println("Blank: " + blank + ", Busy: " + busy);
-        writeBlankAndBusyToLed();
+        //Serial.println("Blank: " + blank + ", Busy: " + busy);
+        //Serial.println("Blank: " + blank + ", Busy: " + busy);
+        //writeBlankAndBusyToLed();
+
+        Serial.print("Blank: ");
+        Serial.print(blank);
+        Serial.print(", Busy: ");
+        Serial.print(busy);
     } else {
         Serial.println("Error : " + firebaseData.errorReason());
     }
 }
 
-void streamCallback(StreamData data) {
-    String all = data.stringData();
-    int commaIndex = all.indexOf(',');
-    blank = all.substring(0, commaIndex);
-    busy = all.substring(commaIndex + 1, all.length());
-    //Serial.println("Stream call bacl, Blank: " + blank + ", Busy: " + busy);
-    //writeBlankAndBusyToLed();
-}
+// void streamCallback(StreamData data) {
+//     String all = data.stringData();
+//     int commaIndex = all.indexOf(',');
+//     blank = all.substring(0, commaIndex);
+//     busy = all.substring(commaIndex + 1, all.length());
+//     //Serial.println("Stream call bacl, Blank: " + blank + ", Busy: " + busy);
+//     //writeBlankAndBusyToLed();
 
-void streamTimeoutCallback(bool timeout) {
-    if (timeout) {
-        Serial.println("Stream timeout, resume streaming...");
-    }
-}
+//     Serial.print("Blank: ");
+//     Serial.print(blank);
+//     Serial.print(", Busy: ");
+//     Serial.print(busy);
+// }
+
+// void streamTimeoutCallback(bool timeout) {
+//     if (timeout) {
+//         Serial.println("Stream timeout, resume streaming...");
+//     }
+// }
 
 // void writeBlankAndBusyToLed() {
 //     //Restet text size;
@@ -581,13 +591,8 @@ void writeBlankAndBusyToLed() {
     //Restet text size;
     TD_max_char_row1 = 10;
     TD_max_char_row2 = 12;
-
-    if (busy.toInt() >= 72) {
-        writeFullToLed();
-        return;
-    }
-
     TD_normal_row = 4;
+    
     TD_color = myGREEN;
     TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
     TD_color = myRED;
@@ -868,10 +873,10 @@ void setup() {
     firebaseData.setBSSLBufferSize(1024, 1024);
     //Set the size of HTTP response buffers in the case where we want to work with large data.
     firebaseData.setResponseSize(1024);
-    Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
-    if (!Firebase.beginStream(firebaseData, "/count/all")) {
-        Serial.println("Error : " + firebaseData.errorReason());
-    }
+    //Firebase.setStreamCallback(firebaseData, streamCallback, streamTimeoutCallback);
+    //if (!Firebase.beginStream(firebaseData, "/count/all")) {
+    //    Serial.println("Error : " + firebaseData.errorReason());
+    //}
     Serial.println(F("Completed"));
     Serial.println(getCurrentTime());
     //writeProjectNameToLed();
@@ -950,6 +955,7 @@ void testFullText() {
 }
 
 void loop() {
+    getPointStatusThirdParty();
     writeMainLed("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย");
     writeMainLed("Parking FACULTY ENGINEERING RMUTI KKC");
     writeMainLed(getCurrentTime());
