@@ -577,7 +577,6 @@ void getPointStatusThirdParty() {
 //     }
 // }
 
-
 void writeBlankAndBusyToLed() {
     //Restet text size;
     TD_max_char_row1 = 10;
@@ -593,7 +592,7 @@ void writeBlankAndBusyToLed() {
 void writeFullToLed() {
     TD_normal_row = 11;
     TD_color = myRED;
-    TD_LEDWriteText(TD_normal_row, 35, "Full parking", true);
+    TD_LEDWriteText(TD_normal_row, 30, "Full parking", true);
 }
 
 void writeMainLed(String p_text) {
@@ -784,9 +783,22 @@ void loop() {
         delay(5000);
     } else {
         writeMainLed("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย");
-        getPointStatusThirdParty();
-        writeMainLed("Parking FACULTY ENGINEERING RMUTI KKC");
-        getPointStatusThirdParty();
-        writeMainLed(getCurrentTime());
     }
+
+    getPointStatusThirdParty();
+    if (busy >= 72 && blank == 0) {
+        writeFullToLed();
+        delay(5000);
+    } else {
+        writeMainLed("Parking FACULTY ENGINEERING RMUTI KKC");
+    }
+
+    getPointStatusThirdParty();
+     if (busy >= 72 && blank == 0) {
+        writeFullToLed();
+        delay(5000);
+    } else {
+         writeMainLed(getCurrentTime());
+    }
+
 }
