@@ -577,26 +577,6 @@ void getPointStatusThirdParty() {
 //     }
 // }
 
-// void writeBlankAndBusyToLed() {
-//     //Restet text size;
-//     TD_max_char_row1 = 10;
-//     TD_max_char_row2 = 12;
-
-//     if (busy.toInt() >= 72) {
-//         TD_normal_row = 11;
-//         TD_color = myRED;
-//         TD_LEDWriteText(TD_normal_row, 18, "เต็ม", true);
-//         //Serial.println("Print Full");
-//         return;
-//     }
-//     TD_normal_row = 4;
-//     TD_color = myGREEN;
-//     TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, true);
-//     TD_normal_row = 18;
-//     TD_color = myRED;
-//     TD_LEDWriteText(TD_normal_row, 9, "จอด: " + busy, false);
-//     //Serial.println("Print Blank an Busy");
-// }
 
 void writeBlankAndBusyToLed() {
     //Restet text size;
@@ -605,15 +585,15 @@ void writeBlankAndBusyToLed() {
     TD_normal_row = 4;
 
     TD_color = myGREEN;
-    TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + blank, false);
+    TD_LEDWriteText(TD_normal_row, 9, "ว่าง: " + String(blank), false);
     TD_color = myRED;
-    TD_LEDWriteText(TD_normal_row, 70, "จอด: " + busy, false);
+    TD_LEDWriteText(TD_normal_row, 70, "จอด: " + String(busy), false);
 }
 
 void writeFullToLed() {
     TD_normal_row = 11;
     TD_color = myRED;
-    TD_LEDWriteText(TD_normal_row, 40, "Full parking", true);
+    TD_LEDWriteText(TD_normal_row, 35, "Full parking", true);
 }
 
 void writeMainLed(String p_text) {
@@ -628,6 +608,7 @@ void writeMainLed(String p_text) {
         delay(ms);
     }
 }
+
 String getCurrentTime() {
     time_t now = time(nullptr);
     struct tm *p_tm = localtime(&now);
@@ -789,80 +770,12 @@ void setup() {
     //    Serial.println("Error : " + firebaseData.errorReason());
     //}
     Serial.println(F("Completed"));
-    Serial.println(getCurrentTime());
+    //Serial.println(getCurrentTime());
 }
 union single_double {
     uint8_t two[2];
     uint16_t one;
 } this_single_double;
-
-void m_1() {
-    display.clearDisplay();
-    display.setTextColor(myCYAN);
-    display.setCursor(2, 0);
-    display.print("Hello");
-    display.setTextColor(myMAGENTA);
-    display.setCursor(2, 8);
-    display.print("How r u?");
-
-    display_update_enable(true);
-
-    yield();
-    delay(1500);
-
-    display.clearDisplay();
-    display.setTextColor(myRED);
-    display.setCursor(2, 0);
-    display.print("Hello");
-    display.setTextColor(myGREEN);
-    display.setCursor(2, 8);
-    display.print("How r u?");
-
-    display_update_enable(true);
-
-    yield();
-    delay(1500);
-}
-
-void m_2() {
-    int i, j;
-
-    display.clearDisplay();
-    display_update_enable(true);
-    for (i = 0; i < 32; i++) {
-        for (j = 0; j < 64; j++) {
-            if ((i % 3) == 0) display.drawPixel(j, i, myRED);
-            if ((i % 3) == 1) display.drawPixel(j, i, myGREEN);
-            if ((i % 3) == 2) display.drawPixel(j, i, myBLUE);
-            display.flushDisplay();
-            //yield();
-            delay(2);
-        }
-    }
-}
-
-void m_3() {
-    TD_normal_row = 3;
-    TD_color = myRED;
-    TD_LEDScrollText("ทดสอบ LED P3 ภาษาไทย");
-
-    TD_normal_row = 3 + 8;
-    TD_color = myGREEN;
-    TD_LEDScrollText("มันจะเขียวๆหน่อยนะครับ");
-
-    TD_normal_row = 3 + 8 + 8;
-    TD_color = myBLUE;
-    TD_LEDScrollText("This is third line in BLUE");
-
-    TD_normal_row = 3 + 8;
-    TD_color = myYELLOW;
-    TD_LEDScrollText((String) char(219) + "  Thanks for watching  " + (String) char(219));
-}
-
-void testFullText() {
-    TD_color = myRED;
-    TD_LEDText("Full");
-}
 
 void loop() {
     getPointStatusThirdParty();
