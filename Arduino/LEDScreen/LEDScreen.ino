@@ -28,8 +28,8 @@
 ESP8266WiFiMulti WiFiMulti;
 
 FirebaseData firebaseData;
-String blank;
-String busy;
+int blank;
+int busy;
 
 Ticker display_ticker;
 // Pins for LED MATRIX
@@ -543,11 +543,10 @@ void getPointStatusThirdParty() {
         String all = firebaseData.stringData();
         int commaIndex = all.indexOf(',');
 
-        blank = all.substring(0, commaIndex);
-        busy = all.substring(commaIndex + 1, all.length());
-        //Serial.println("Blank: " + blank + ", Busy: " + busy);
-        //Serial.println("Blank: " + blank + ", Busy: " + busy);
-        //writeBlankAndBusyToLed();
+        String blankText = all.substring(0, commaIndex);
+        String busyText = all.substring(commaIndex + 1, all.length());
+        blank = blankText.toInt();
+        busy = busyText.toInt();
 
         Serial.print("Blank: ");
         Serial.print(blank);
@@ -612,16 +611,10 @@ void writeBlankAndBusyToLed() {
 }
 
 void writeFullToLed() {
+    TD_normal_row = 11;
+    TD_color = myRED;
+    TD_LEDWriteText(TD_normal_row, 40, "Full parking", true);
 }
-
-// void writeProjectNameToLed() {
-//     TD_normal_row = 18;
-//     TD_color = myBLUE;
-//     TD_LEDScrollText("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย", 20);
-//     TD_LEDScrollText("Parking FACULTY ENGINEERING RMUTI KKC", 20);
-//     TD_LEDScrollText(getCurrentTime(), 20);
-//     Serial.println("Print project name");
-// }
 
 void writeMainLed(String p_text) {
     unsigned long ms = 20;
@@ -635,42 +628,27 @@ void writeMainLed(String p_text) {
         delay(ms);
     }
 }
-// String getCurrentTime2() {
-//     time_t now = time(nullptr);
-
-//     struct tm *p_tm = localtime(&now);
-
-//     Serial.print(p_tm->tm_hour);
-
-//     Serial.print(":");
-
-//     Serial.print(p_tm->tm_min);
-
-//     Serial.print(":");
-
-//     Serial.print(p_tm->tm_sec);
-// }
-
 String getCurrentTime() {
     time_t now = time(nullptr);
-    //Serial.println(ctime(&now));
-    return (String(ctime(&now)));
+    struct tm *p_tm = localtime(&now);
+
+    String dateTime = "";
+    dateTime = (p_tm->tm_mday);
+    dateTime = dateTime + "/";
+    dateTime = dateTime + ((p_tm->tm_mon) + 1);
+    dateTime = dateTime + "/";
+    dateTime = dateTime + ((p_tm->tm_year) + 1900);
+    dateTime = dateTime + " ";
+    dateTime = dateTime + (p_tm->tm_hour);
+    dateTime = dateTime + ":";
+    dateTime = dateTime + (p_tm->tm_min);
+    return dateTime;
 }
 
 // String getCurrentTime() {
 //     time_t now = time(nullptr);
-//     setTime(now);
-//     String dateTime = "";
-//     dateTime = dateTime + String(day(now));
-//     dateTime = dateTime + "/";
-//     dateTime = dateTime + String(month(now));
-//     dateTime = dateTime + "/";
-//     dateTime = dateTime + String((year(now) + 543));
-//     dateTime = dateTime + " ";
-//     dateTime = dateTime + String((hour(now) + 7));
-//     dateTime = dateTime + ":";
-//     dateTime = dateTime + String(minute(now));
-//     return dateTime;
+//     //Serial.println(ctime(&now));
+//     return (String(ctime(&now)));
 // }
 
 // void getBlankAndBusyPointsWithHttps() {
@@ -888,9 +866,14 @@ void testFullText() {
 
 void loop() {
     getPointStatusThirdParty();
-    writeMainLed("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย");
-    getPointStatusThirdParty();
-    writeMainLed("Parking FACULTY ENGINEERING RMUTI KKC");
-    getPointStatusThirdParty();
-    writeMainLed(getCurrentTime());
+    if (busy >= 72 && blank == 0) {
+        writeFullToLed();
+        delay(5000);
+    } else {
+        writeMainLed("โปรเจ็ค พัฒนาระบบตรวจนับที่จอดรถสำหรับแอปพลิเคชั่นแอนดอร์ย");
+        getPointStatusThirdParty();
+        writeMainLed("Parking FACULTY ENGINEERING RMUTI KKC");
+        getPointStatusThirdParty();
+        writeMainLed(getCurrentTime());
+    }
 }
