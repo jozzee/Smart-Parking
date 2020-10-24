@@ -6,7 +6,7 @@
 #include <FirebaseESP8266.h>
 #include <PxMatrix.h>
 #include <Ticker.h>
-#include <TimeLib.h>
+#include <Time.h>
 #include <WiFiClientSecureBearSSL.h>
 
 #include "CharactersData.h"
@@ -526,6 +526,18 @@ void connectWiFi() {
     Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
 }
+
+void configTime() {
+    int timezone = 7 * 3600;                                     //ตั้งค่า TimeZone ตามเวลาประเทศไทย
+    int dst = 0;                                                 //กำหนดค่า Date Swing Time
+    configTime(timezone, dst, "pool.ntp.org", "time.nist.gov");  //ดึงเวลาจาก Server
+    Serial.println("\nLoading time");
+    while (!time(nullptr)) {
+        Serial.print("*");
+        delay(1000);
+    }
+}
+
 void getPointStatusThirdParty() {
     if (Firebase.getString(firebaseData, "/count/all")) {
         String all = firebaseData.stringData();
@@ -623,6 +635,21 @@ void writeMainLed(String p_text) {
         delay(ms);
     }
 }
+// String getCurrentTime2() {
+//     time_t now = time(nullptr);
+
+//     struct tm *p_tm = localtime(&now);
+
+//     Serial.print(p_tm->tm_hour);
+
+//     Serial.print(":");
+
+//     Serial.print(p_tm->tm_min);
+
+//     Serial.print(":");
+
+//     Serial.print(p_tm->tm_sec);
+// }
 
 String getCurrentTime() {
     time_t now = time(nullptr);
@@ -645,6 +672,7 @@ String getCurrentTime() {
 //     dateTime = dateTime + String(minute(now));
 //     return dateTime;
 // }
+
 // void getBlankAndBusyPointsWithHttps() {
 //     Serial.println("Get Parking Status...");
 //     //Check WiFi connection status
@@ -759,6 +787,8 @@ void setup() {
     connectWiFi();
     //connectWiFiRmuti();
 
+    configTime();
+
     //Connect WiFi in WIFI_STA Mode
     // for (uint8_t t = 4; t > 0; t--) {
     //     Serial.println("[SETUP] WAIT " + String(t) + "...");
@@ -782,7 +812,6 @@ void setup() {
     //}
     Serial.println(F("Completed"));
     Serial.println(getCurrentTime());
-    //writeProjectNameToLed();
 }
 union single_double {
     uint8_t two[2];
