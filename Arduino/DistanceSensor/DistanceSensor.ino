@@ -195,6 +195,9 @@ void pushData(String point, bool parckingStatus, String action) {
 }
 
 void setup() {
+    //explain1: ประกาศ input, output ให้กับ noe mcu
+    //TRIG,ECHO กำหนดขาเชื่อมต่อ กับ sensor วัดระยะทาง
+    //LED กำหนดขาไฟแสดงสถานะ
     pinMode(LED_NODE, OUTPUT);
 
     pinMode(TRIG_NO_1, OUTPUT);
@@ -212,11 +215,13 @@ void setup() {
     //Starts the serial communication
     Serial.begin(115200);
 
+    //explain2: เชื่อมต่อ Wifi
     //Connecting to WiFi and initial time
     connectWiFi();
     //connectWiFiRmuti();
     //initialTime();
 
+    //explain3: ตั้งค่า Firebase และ connect firebae
     //Setup firebase
     Serial.println(F("Setup Fireebase..."));
     Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
@@ -229,6 +234,7 @@ void setup() {
     delay(3000);
     Serial.println(F("Start..Program!!"));
 
+    //explain4: ตั้งค่าเริ่มต้น ให้ทุกช่องเป็นค่าว่าง
     digitalWrite(LED_NO_1, ((isBlankNo1) ? HIGH : LOW));
     digitalWrite(LED_NO_2, ((isBlankNo2) ? HIGH : LOW));
     digitalWrite(LED_NO_3, ((isBlankNo3) ? HIGH : LOW));
@@ -239,6 +245,8 @@ void setup() {
 }
 
 void loop() {
+    //explain6: กำหนดระยะห่างขั้นต่ำที่ 1 เมตร
+    //**ในลายจอดรถจะสูงประมาณ 2.5 เมตร จากพิ้นถึงเพดาน ถ้ามีรถมาจอด ระยะทางที่วัดได้จะเป็นจาดเพดาน มาถึงหลังคารถแทน ซึ่งถ้าระยะห่างที่ได้น้อยกว่า 1 เมตร แสดงว่ามีรถจอด
     int minDistance = 100;
     int distance;
 
@@ -247,12 +255,15 @@ void loop() {
     Serial.println(F(""));
 
     //------------------------------------------------------
+    //explai7: ตรวจสอบระยะท่างจุกที่ 1
     distance = getDistance(POINT_1);
     if (distance < minDistance && isBlankNo1) {
         //Have a car parked
+        //explain8: ถ้าระยะห่างน้อยกว่า 1 เมตร แสดงว่ามีรถจอด 
         Serial.print(F("Have a car parked at "));
         Serial.println(POINT_1);
 
+        //explain9: ปิด led และส่งค่าไปยัง firebase
         digitalWrite(LED_NO_1, LOW);
         isBlankNo1 = false;
 
@@ -261,9 +272,11 @@ void loop() {
 
     } else if (distance > minDistance && !isBlankNo1) {
         //Free parking
+         //explain10: ถ้าระยะห่างมากกว่า 1 เมตร แสดงว่าว่าง
         Serial.print(F("Free parking at "));
         Serial.println(POINT_1);
-
+        
+        //explai11: แสดงไฟ led เป็ยสีเขียววว่าว่าง และส่งค่าไปยัง firebase
         digitalWrite(LED_NO_1, HIGH);
         isBlankNo1 = true;
 
@@ -275,6 +288,8 @@ void loop() {
     //Delay 100 milisecond.
     delay(100);
     distance = 0;
+    //explain12: ตรวจสอบระยะท่างจุกที่ 2
+    //ขั้นตอนเหมือนกับจุดแรก
     distance = getDistance(POINT_2);
     if (distance < minDistance && isBlankNo2) {
         //Have a car parked
@@ -303,6 +318,8 @@ void loop() {
     //Delay 100 milisecond.
     delay(100);
     distance = 0;
+    //explain13: ตรวจสอบระยะท่างจุกที่ 3
+    //ขั้นตอนเหมือนกับจุดแรกและจุดที่สอง
     distance = getDistance(POINT_3);
     if (distance < minDistance && isBlankNo3) {
         //Have a car parked
