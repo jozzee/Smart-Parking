@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <SPI.h>
 //#include <time.h>
 
 #include <ArduinoJson.h>
-#include <FirebaseArduino.h>
+#include <FirebaseESP8266.h>
 
 //Defines pins numbers
 #define LED_NODE 16  //D0, GIPO16 (D0 Hegiht = Low, Low = Height)
@@ -35,6 +36,8 @@
 
 #define FIREBASE_HOST "project-cb8fd.firebaseio.com"  //https://project-cb8fd.firebaseio.com
 #define FIREBASE_KEY "vAPQvwMb190kRe1Fc9pwAtBUmxDz1FoCg5XweFfo"
+
+FirebaseData firebaseData;
 
 bool isBlankNo1 = true;
 bool isBlankNo2 = true;
@@ -91,33 +94,34 @@ int getDistance(String point) {
     return distance;
 }
 
-void connectWiFiRmuti() {
-    char ssid[] = "@RMUTI-WiFi";
-    char pass[] = "";
+// void connectWiFiRmuti() {
+//     char ssid[] = "@RMUTI-WiFi";
+//     char pass[] = "";
 
-    Serial.print(F("Connecting to: "));
-    Serial.println(ssid);
-    WiFi.begin(ssid, pass);
+//     Serial.print(F("Connecting to: "));
+//     Serial.println(ssid);
+//     WiFi.begin(ssid, pass);
 
-    while (WiFi.status() != WL_CONNECTED) {
-        Serial.print(".");
-        delay(500);
-    }
+//     while (WiFi.status() != WL_CONNECTED) {
+//         Serial.print(".");
+//         delay(500);
+//     }
 
-    HTTPClient http;
-    http.begin("http://afw-kkc.rmuti.ac.th/login.php?r004335174&url=http://www.msftconnecttest.com/redirect");
-    Serial.print("[HTTP] POST...\n");
-    int httpCode = http.POST("_u: narongchai.ph_p: 0944366656a: aweb_host: afw-kkc.rmuti.ac.thweb_host4: afw4-kkc.rmuti.ac.th_ip4: 172.25.170.171web_host6: _ip6: ");
-    if (httpCode > 0) {
-        Serial.printf("[HTTP] POST... code: %d\n", httpCode);
-        if (httpCode == HTTP_CODE_OK) {
-            Serial.println("Yes....You can do it");
-        }
-    } else {
-        Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    }
-    http.end();
-}
+//     HTTPClient http;
+//     http.begin("http://afw-kkc.rmuti.ac.th/login.php?r004335174&url=http://www.msftconnecttest.com/redirect");
+//     Serial.print("[HTTP] POST...\n");
+//     int httpCode = http.POST("_u: narongchai.ph_p: 0944366656a: aweb_host: afw-kkc.rmuti.ac.thweb_host4: afw4-kkc.rmuti.ac.th_ip4: 172.25.170.171web_host6: _ip6: ");
+//     if (httpCode > 0) {
+//         Serial.println("[HTTP] POST... code: %d\n" + httpCode);
+//         if (httpCode == HTTP_CODE_OK) {
+//             Serial.println("Yes....You can do it");
+//         }
+//     } else {
+//         String error = http.errorToString(httpCode).c_str();
+//         Serial.println("[HTTP] POST... failed, error: %s\n" + error);
+//     }
+//     http.end();
+// }
 
 void connectWiFi() {
     Serial.print(F("Connecting to: "));
@@ -165,26 +169,26 @@ void pushData(String point, bool parckingStatus, String action) {
     Serial.println("Push Data to Firebase...");
 
     //Update status
-    Firebase.setString("status/" + String(point), parckingStatus ? "true" : "false");
-    Serial.print(F("Set status is success: "));
-    Serial.println(Firebase.success());
-    if (Firebase.success() != 1) {
-        Serial.print(F("Error: "));
-        Serial.println(Firebase.error());
+    if (Firebase.setString(firebaseData, "/status/" + String(point), parckingStatus ? "true" : "false")) {
+        Serial.println(F("Set status success:"));
+    } else {
+        Serial.println("Set status falied, Error: " + firebaseData.errorReason());
     }
 
     //Add history
-    StaticJsonBuffer<200> jsonBuffer;
-    JsonObject& historyObject = jsonBuffer.createObject();
-    historyObject["time"] = getCurrentTime();
-    historyObject["action"] = action;
+    //StaticJsonBuffer<200> jsonBuffer;
+    //JsonObject& historyObject = jsonBuffer.createObject();
+    //historyObject["time"] = getCurrentTime();
+    //historyObject["action"] = action;
 
-    Firebase.push("history/" + String(point), historyObject);
-    Serial.print(F("Add history is success: "));
-    Serial.println(Firebase.success());
-    if (Firebase.success() != 1) {
-        Serial.print(F("Error: "));
-        Serial.println(Firebase.error());
+    FirebaseJson data;
+    data.set("time", getCurrentTime());
+    data.set("action", action);
+
+    if (Firebase.setJSON(firebaseData, "/history/" + String(point), data)) {
+        Serial.println(F("Add history success"));
+    } else {
+        Serial.println("Add history falied, Error: " + firebaseData.errorReason());
     }
 
     delay(1000);
@@ -216,10 +220,11 @@ void setup() {
     //Setup firebase
     Serial.println(F("Setup Fireebase..."));
     Firebase.begin(FIREBASE_HOST, FIREBASE_KEY);
-    if (Firebase.success() != 1) {
-        Serial.print(F("Error: "));
-        Serial.println(Firebase.error());
-    }
+
+    //Set AP reconnection in setup()
+    Firebase.reconnectWiFi(true);
+    //Optional, set number of error retry
+    Firebase.setMaxRetry(firebaseData, 3);
 
     delay(3000);
     Serial.println(F("Start..Program!!"));
@@ -228,9 +233,9 @@ void setup() {
     digitalWrite(LED_NO_2, ((isBlankNo2) ? HIGH : LOW));
     digitalWrite(LED_NO_3, ((isBlankNo3) ? HIGH : LOW));
 
-    Firebase.setString("status/" + String(POINT_1), isBlankNo1 ? "true" : "false");
-    Firebase.setString("status/" + String(POINT_2), isBlankNo2 ? "true" : "false");
-    Firebase.setString("status/" + String(POINT_3), isBlankNo3 ? "true" : "false");
+    Firebase.setString(firebaseData, "/status/" + String(POINT_1), isBlankNo1 ? "true" : "false");
+    Firebase.setString(firebaseData, "/status/" + String(POINT_2), isBlankNo2 ? "true" : "false");
+    Firebase.setString(firebaseData, "/status/" + String(POINT_3), isBlankNo3 ? "true" : "false");
 }
 
 void loop() {
