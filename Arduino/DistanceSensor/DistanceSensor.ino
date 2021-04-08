@@ -1,11 +1,10 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
-#include <SPI.h>
-//#include <time.h>
-
-#include <ArduinoJson.h>
 #include <FirebaseESP8266.h>
+#include <SPI.h>
+#include <time.h>
 
 //Defines pins numbers
 #define LED_NODE 16  //D0, GIPO16 (D0 Hegiht = Low, Low = Height)
@@ -139,21 +138,66 @@ void connectWiFi() {
     Serial.println(WiFi.localIP());
 }
 
-// void initialTime() {
-//     configTime(7 * 3600, 0, "pool.ntp.org", "time.nist.gov");
-//     Serial.println(F("Initializing time"));
-//     while (!time(nullptr)) {
-//         Serial.print(F("."));
-//         toggleLedNode();
-//         delay(500);
-//     }
-//     Serial.println(F(""));
-// }
+void initialTime() {
+    configTime(7 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+    Serial.println(F("Initializing time"));
+    while (!time(nullptr)) {
+        Serial.print(F("."));
+        toggleLedNode();
+        delay(500);
+    }
+    Serial.println(F(""));
+}
 
 String getCurrentTime() {
-    time_t now = time(nullptr);
-    Serial.println(ctime(&now));
-    return (String(ctime(&now)));
+    time_t now;
+    struct tm* timeinfo;
+
+    time(&now);
+    timeinfo = localtime(&now);
+
+    int year = 1900 + (timeinfo->tm_year);
+    int month = 1 + (timeinfo->tm_mon);
+    int day = timeinfo->tm_mday;
+    int hour = timeinfo->tm_hour;
+    int minute = timeinfo->tm_min;
+    int second = timeinfo->tm_sec;
+
+    String dateTime = "";
+
+    if (day < 10) {
+        dateTime += "0";
+    }
+    dateTime += String(day);
+    dateTime += "/";
+
+    if (month < 10) {
+        dateTime += "0";
+    }
+    dateTime += String(month);
+    dateTime += "/";
+
+    dateTime += String(year);
+    dateTime += " ";
+
+    if (hour < 10) {
+        dateTime += "0";
+    }
+    dateTime += String(hour);
+    dateTime += ":";
+
+    if (minute < 10) {
+        dateTime += "0";
+    }
+    dateTime += String(minute);
+    dateTime += ":";
+
+    if (second < 10) {
+        dateTime += "0";
+    }
+    dateTime += String(second);
+
+    return dateTime;
 }
 
 String createHistory(String act) {
@@ -168,7 +212,7 @@ String createHistory(String act) {
 void pushData(String point, bool parkingStatus, String action) {
     
     String currentTime = getCurrentTime();
-    
+
     Serial.println("Parking update at point: " + point + ", action: " + action + ", time: " + currentTime);
     Serial.println(F("Push Data to Firebase..."));
 
@@ -225,7 +269,7 @@ void setup() {
     //Connecting to WiFi and initial time
     connectWiFi();
     //connectWiFiRmuti();
-    //initialTime();
+    initialTime();
 
     //explain3: ตั้งค่า Firebase และ connect firebae
     //Setup firebase
@@ -265,7 +309,7 @@ void loop() {
     distance = getDistance(POINT_1);
     if (distance < minDistance && isBlankNo1) {
         //Have a car parked
-        //explain8: ถ้าระยะห่างน้อยกว่า 1 เมตร แสดงว่ามีรถจอด 
+        //explain8: ถ้าระยะห่างน้อยกว่า 1 เมตร แสดงว่ามีรถจอด
         Serial.print(F("Have a car parked at "));
         Serial.println(POINT_1);
 
@@ -278,10 +322,10 @@ void loop() {
 
     } else if (distance > minDistance && !isBlankNo1) {
         //Free parking
-         //explain10: ถ้าระยะห่างมากกว่า 1 เมตร แสดงว่าว่าง
+        //explain10: ถ้าระยะห่างมากกว่า 1 เมตร แสดงว่าว่าง
         Serial.print(F("Free parking at "));
         Serial.println(POINT_1);
-        
+
         //explai11: แสดงไฟ led เป็ยสีเขียววว่าว่าง และส่งค่าไปยัง firebase
         digitalWrite(LED_NO_1, HIGH);
         isBlankNo1 = true;
