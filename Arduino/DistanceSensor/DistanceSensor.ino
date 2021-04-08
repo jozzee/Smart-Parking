@@ -152,7 +152,7 @@ void connectWiFi() {
 
 String getCurrentTime() {
     time_t now = time(nullptr);
-    //Serial.println(ctime(&now));
+    Serial.println(ctime(&now));
     return (String(ctime(&now)));
 }
 
@@ -165,14 +165,19 @@ String createHistory(String act) {
     return "{\"time\":" + getCurrentTime() + ",\"action\":" + act + "}";
 }
 
-void pushData(String point, bool parckingStatus, String action) {
-    Serial.println("Push Data to Firebase...");
+void pushData(String point, bool parkingStatus, String action) {
+    
+    String currentTime = getCurrentTime();
+    
+    Serial.println("Parking update at point: " + point + ", action: " + action + ", time: " + currentTime);
+    Serial.println(F("Push Data to Firebase..."));
 
     //Update status
-    if (Firebase.setString(firebaseData, "/status/" + String(point), parckingStatus ? "true" : "false")) {
-        Serial.println(F("Set status success:"));
+    Serial.print(F("Update status... "));
+    if (Firebase.setString(firebaseData, "/status/" + String(point), parkingStatus ? "true" : "false")) {
+        Serial.println(F("Success!!"));
     } else {
-        Serial.println("Set status falied, Error: " + firebaseData.errorReason());
+        Serial.println("Falied!!, Error: " + firebaseData.errorReason());
     }
 
     //Add history
@@ -182,13 +187,14 @@ void pushData(String point, bool parckingStatus, String action) {
     //historyObject["action"] = action;
 
     FirebaseJson data;
-    data.set("time", getCurrentTime());
+    data.set("time", currentTime);
     data.set("action", action);
 
+    Serial.print(F("Add history... "));
     if (Firebase.setJSON(firebaseData, "/history/" + String(point), data)) {
-        Serial.println(F("Add history success"));
+        Serial.println(F("Success!!"));
     } else {
-        Serial.println("Add history falied, Error: " + firebaseData.errorReason());
+        Serial.println("Falied, Error: " + firebaseData.errorReason());
     }
 
     delay(1000);
